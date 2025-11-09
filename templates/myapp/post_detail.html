@@ -1,18 +1,45 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-<div class="card">
+<div class="card shadow-sm">
+  {% if post.image %}
+    <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="max-height: 400px; object-fit: cover;">
+  {% else %}
+    <img src="{% static 'img/placeholder.png' %}" class="card-img-top" alt="Нет изображения" style="max-height: 400px; object-fit: cover;">
+  {% endif %}
+
   <div class="card-body">
-    <h2 class="card-title">{{ post.title }}</h2>
+    <h2 class="card-title mb-3">{{ post.title }}</h2>
+
+    <p class="text-muted mb-2">
+      Категория:
+      {% if post.category %}
+        <span class="badge bg-secondary">{{ post.category.name }}</span>
+      {% else %}
+        <span class="text-muted">(без категории)</span>
+      {% endif %}
+    </p>
+
+    {% if post.tags.exists %}
+      <p class="small mb-3">
+        {% for tag in post.tags.all %}
+          <span class="badge bg-info text-dark">{{ tag.name }}</span>
+        {% endfor %}
+      </p>
+    {% endif %}
+
     <p class="card-text">{{ post.content }}</p>
-    <p class="text-muted">
+
+    <p class="text-muted mt-3">
       Рейтинг: {{ post.rate }} <br>
       Создан: {{ post.created_at|date:"d.m.Y H:i" }} <br>
       Обновлён: {{ post.updated_at|date:"d.m.Y H:i" }}
     </p>
-    <a href="{% url 'post_list' %}" class="btn btn-secondary">Назад к списку</a>
+
+    <a href="{% url 'post_list' %}" class="btn btn-secondary mt-2">← Назад к списку</a>
   </div>
 </div>
 {% endblock %}
